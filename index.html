@@ -1,1 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <title>Refresh Opportunity Scoring for Search Content</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                         Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.7;
+            color: #1f2937;
+            background: #f5f7fa;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        header {
+            background: #111827;
+            color: white;
+            padding: 70px 24px;
+        }
+
+        header .container {
+            padding-top: 20px;
+            padding-bottom: 20px;
+        }
+
+        .eyebrow {
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.8rem;
+            opacity: 0.7;
+            font-weight: 600;
+        }
+
+        h1 {
+            font-size: 3rem;
+            line-height: 1.15;
+            margin: 15px 0;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            max-width: 750px;
+            opacity: 0.85;
+        }
+
+        section {
+            background: white;
+            margin: 28px 0;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin-top: 0;
+            color: #111827;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            color: #374151;
+            margin-top: 30px;
+        }
+
+        .abstract {
+            font-size: 1.08rem;
+        }
+
+        .highlight {
+            background: #f3f4f6;
+            border-left: 4px solid #111827;
+            padding: 18px 22px;
+            margin: 25px 0;
+        }
+
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin: 25px 0;
+        }
+
+        .metric {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 22px;
+            text-align: center;
+        }
+
+        .metric .value {
+            display: block;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .metric .label {
+            display: block;
+            margin-top: 5px;
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 0.95rem;
+        }
+
+        th,
+        td {
+            padding: 12px 10px;
+            border-bottom: 1px solid #e5e7eb;
+            text-align: left;
+        }
+
+        th {
+            background: #f9fafb;
+            font-weight: 600;
+        }
+
+        code {
+            background: #f3f4f6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        ul {
+            padding-left: 25px;
+        }
+
+        .recommendation {
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .recommendation strong {
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .note {
+            color: #6b7280;
+            font-size: 0.92rem;
+        }
+
+        a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            text-align: center;
+            color: #6b7280;
+            padding: 30px 20px 50px;
+        }
+
+        @media (max-width: 700px) {
+            h1 {
+                font-size: 2.2rem;
+            }
+
+            section {
+                padding: 25px;
+            }
+
+            .metric-grid {
+                grid-template-columns: 1fr;
+            }
+
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="container">
+        <div class="eyebrow">FlyRank ML Internship · Capstone</div>
+
+        <h1>Refresh Opportunity Scoring for Search Content</h1>
+
+        <p class="subtitle">
+            A machine-learning approach to prioritizing content for
+            refresh investigation using anonymized search-performance signals.
+        </p>
+    </div>
+</header>
+
+
+<main class="container">
+
+    <!-- ABSTRACT -->
+
+    <section>
+        <h2>Abstract</h2>
+
+        <p class="abstract">
+            Search-content teams need a practical way to identify which
+            content should receive attention first without treating a model's
+            prediction as proof of future performance. This study evaluates
+            whether a machine-learning approach can improve the identification
+            of initial refresh candidates compared with a simple rule-based
+            baseline. The analysis uses anonymized FlyRank search-content data,
+            excludes label-derived and future-window features, and uses a
+            client-grouped validation design. Logistic Regression achieved an
+            F1 score of 0.7193 compared with 0.3579 for the rule-based baseline,
+            while Random Forest achieved 0.7190. The resulting model was used
+            to produce a ranked review queue in which the highest-priority
+            records were characterized by strong model scores and declining
+            performance signals.
+        </p>
+    </section>
+
+
+    <!-- QUESTION -->
+
+    <section>
+        <h2>1. Research Question</h2>
+
+        <h3>Question</h3>
+
+        <p>
+            Can a machine-learning model identify content that should be
+            prioritized for refresh review more effectively than a simple
+            rule-based scoring system?
+        </p>
+
+        <h3>Decision supported</h3>
+
+        <p>
+            The analysis supports a content-prioritization decision:
+            which pages should a content team investigate first when deciding
+            where refresh effort may be warranted.
+        </p>
+
+        <div class="highlight">
+            The system is intended to prioritize human attention. It is not
+            intended to automatically decide which content must be refreshed
+            or to establish that refreshing a page will improve search
+            performance.
+        </div>
+    </section>
+
+
+    <!-- DATA -->
+
+    <section>
+        <h2>2. Data</h2>
+
+        <p>
+            The analysis uses the anonymized FlyRank ML Internship dataset.
+            The data contains content-level search and performance signals,
+            including measures related to visibility, clicks, impressions,
+            CTR, position, content age, update recency, and performance trends.
+        </p>
+
+        <h3>Feature families</h3>
+
+        <ul>
+            <li>Content age and update recency</li>
+            <li>Search position</li>
+            <li>Impressions</li>
+            <li>Clicks and pageviews</li>
+            <li>CTR</li>
+            <li>Historical activity</li>
+            <li>Performance trend signals</li>
+            <li>Other non-label-derived numerical and categorical attributes</li>
+        </ul>
+
+        <h3>Excluded fields</h3>
+
+        <p>
+            Fields were excluded when they directly represented the target,
+            were derived from the target or decision logic, represented
+            future information, or created a risk of leakage.
+        </p>
+
+        <h4>Label-derived and rule-derived fields</h4>
+
+        <ul>
+            <li><code>is_initial_refresh_candidate</code></li>
+            <li><code>needs_indexing</code></li>
+            <li><code>is_quick_win</code></li>
+            <li><code>needs_ctr_fix</code></li>
+            <li><code>needs_engagement_fix</code></li>
+            <li><code>is_underperformer</code></li>
+            <li><code>is_declining</code></li>
+            <li><code>health_score</code></li>
+            <li><code>ai_opportunity</code></li>
+        </ul>
+
+        <h4>Future-window fields</h4>
+
+        <ul>
+            <li><code>future_clicks</code></li>
+            <li><code>future_ctr</code></li>
+            <li><code>next_30d_sessions</code></li>
+        </ul>
+
+        <h4>Identifiers</h4>
+
+        <p>
+            <code>content_id</code> was used only to identify records in
+            recommendation outputs and was not used as a predictive feature.
+            <code>client_id</code> was used for grouped validation and was
+            not used as a predictive feature.
+        </p>
+
+        <div class="highlight">
+            The published analysis does not expose client names, domains,
+            URLs, private queries, credentials, or raw private exports.
+        </div>
+    </section>
+
+
+    <!-- METHODOLOGY -->
+
+    <section>
+        <h2>3. Methodology</h2>
+
+        <h3>Prediction target</h3>
+
+        <p>
+            The prediction target is
+            <code>is_initial_refresh_candidate</code>.
+            The task is treated as a binary classification problem.
+        </p>
+
+        <h3>Feature preparation</h3>
+
+        <p>
+            Numerical and categorical features were handled separately.
+            Numerical features were imputed and scaled. Categorical features
+            were imputed and one-hot encoded, with unseen categories handled
+            safely during transformation.
+        </p>
+
+        <p>
+            Preprocessing was implemented as part of the machine-learning
+            pipeline so that transformations were learned from training data
+            rather than from the held-out test data.
+        </p>
+
+        <h3>Leakage checks</h3>
+
+        <p>
+            A dedicated leakage investigation was performed before modeling.
+            Three major sources were examined:
+        </p>
+
+        <ol>
+            <li>Label-derived columns</li>
+            <li>Future-window measurements</li>
+            <li>Product and hand-written decision flags</li>
+        </ol>
+
+        <p>
+            These fields were excluded from the final predictive feature set.
+        </p>
+
+        <h3>Baseline</h3>
+
+        <p>
+            The Week-4 baseline was a rule-based scoring system using
+            observable signals such as update recency and performance trend.
+            It achieved an F1 score of <strong>0.3579</strong>.
+        </p>
+
+        <h3>Validation design</h3>
+
+        <p>
+            A client-grouped split was used with
+            <code>StratifiedGroupKFold</code>.
+            Records belonging to the same client were kept within the same
+            fold rather than being randomly distributed between training
+            and testing data.
+        </p>
+
+        <p>
+            This design reduces the risk that the model benefits from seeing
+            closely related records from the same client during training and
+            then being evaluated on another record from that client.
+        </p>
+
+        <h3>Models</h3>
+
+        <p>
+            Logistic Regression and Random Forest were evaluated using the
+            same validation design.
+        </p>
+
+        <p>
+            Logistic Regression was selected as the final model because it
+            achieved the highest observed F1 score while remaining simpler
+            than the tree-based alternative.
+        </p>
+    </section>
+
+
+    <!-- RESULTS -->
+
+    <section>
+        <h2>4. Results</h2>
+
+        <div class="metric-grid">
+            <div class="metric">
+                <span class="value">0.3579</span>
+                <span class="label">Rule-based baseline F1</span>
+            </div>
+
+            <div class="metric">
+                <span class="value">0.7193</span>
+                <span class="label">Logistic Regression F1</span>
+            </div>
+
+            <div class="metric">
+                <span class="value">0.7190</span>
+                <span class="label">Random Forest F1</span>
+            </div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Method</th>
+                    <th>F1 Score</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    <td>Week-4 rule-based baseline</td>
+                    <td><strong>0.3579</strong></td>
+                </tr>
+
+                <tr>
+                    <td>Logistic Regression</td>
+                    <td><strong>0.7193</strong></td>
+                </tr>
+
+                <tr>
+                    <td>Random Forest</td>
+                    <td><strong>0.7190</strong></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p>
+            The machine-learning models substantially outperformed the
+            rule-based baseline on the same held-out client-grouped test set.
+            Logistic Regression produced the highest observed F1 score,
+            although the difference from Random Forest was negligible.
+        </p>
+
+        <div class="highlight">
+            The result supports choosing the simpler Logistic Regression
+            model rather than selecting a more complex model solely because
+            it is more sophisticated.
+        </div>
+
+        <h3>Feature interpretation</h3>
+
+        <p>
+            Feature-importance analysis for the Random Forest highlighted
+            signals including average position, content age, impressions,
+            days with impressions, historical impressions, and CTR.
+        </p>
+
+        <p>
+            These signals suggest that refresh-candidate identification is
+            associated with a combination of search position, content age,
+            visibility, and engagement rather than freshness alone.
+        </p>
+
+        <h3>Model quality check</h3>
+
+        <p>
+            An initially observed near-perfect Random Forest result was
+            investigated before the final results were reported. The
+            corrected Random Forest F1 was approximately 0.7190.
+        </p>
+
+        <p>
+            This investigation prevented an artificially inflated result
+            from being presented as the final model performance.
+        </p>
+    </section>
+
+
+    <!-- LIMITATIONS -->
+
+    <section>
+        <h2>5. Limitations &amp; Honest Framing</h2>
+
+        <p>
+            This analysis is based on historical observational data.
+            The relationships identified by the model should therefore be
+            interpreted as associations rather than causal effects.
+        </p>
+
+        <p>
+            A high model score does not prove that refreshing a page will
+            improve impressions, clicks, rankings, or engagement.
+        </p>
+
+        <p>
+            The available features cannot capture every short-term change
+            or every reason why a page's search performance may change.
+        </p>
+
+        <p>
+            Factors such as editorial importance, business priorities,
+            content quality, search intent, and strategic context may not
+            be represented in the available data.
+        </p>
+
+        <div class="highlight">
+            <strong>
+                The model identifies pages worth investigating first;
+                it does not determine which pages must be refreshed or prove
+                that a refresh will improve search performance.
+            </strong>
+        </div>
+    </section>
+
+
+    <!-- RECOMMENDATIONS -->
+
+    <section>
+        <h2>6. Ranked Recommendations</h2>
+
+        <p>
+            The final Logistic Regression model was used to calculate a
+            probability score for each record in the recommendation set.
+            Records were then ranked from highest priority to lowest priority.
+        </p>
+
+        <p>
+            The top ten recommendations had model scores ranging from
+            <strong>0.9618 to 0.9786</strong>.
+        </p>
+
+        <h3>Top-10 pattern</h3>
+
+        <p>
+            All ten highest-ranked records received the
+            <code>DECLINING</code> reason code and the
+            <strong>Investigate Decline</strong> action.
+        </p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Score</th>
+                    <th>Trend</th>
+                    <th>Trend %</th>
+                    <th>Avg. Position</th>
+                    <th>CTR</th>
+                    <th>Impressions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>0.9786</td>
+                    <td>down</td>
+                    <td>-63.4%</td>
+                    <td>10.2</td>
+                    <td>0.14</td>
+                    <td>2,084</td>
+                </tr>
+
+                <tr>
+                    <td>2</td>
+                    <td>0.9785</td>
+                    <td>down</td>
+                    <td>-59.8%</td>
+                    <td>10.5</td>
+                    <td>0.10</td>
+                    <td>2,979</td>
+                </tr>
+
+                <tr>
+                    <td>3</td>
+                    <td>0.9719</td>
+                    <td>down</td>
+                    <td>-65.8%</td>
+                    <td>11.4</td>
+                    <td>0.29</td>
+                    <td>1,043</td>
+                </tr>
+
+                <tr>
+                    <td>4</td>
+                    <td>0.9709</td>
+                    <td>down</td>
+                    <td>-61.8%</td>
+                    <td>10.6</td>
+                    <td>0.50</td>
+                    <td>2,779</td>
+                </tr>
+
+                <tr>
+                    <td>5</td>
+                    <td>0.9705</td>
+                    <td>down</td>
+                    <td>-63.5%</td>
+                    <td>12.1</td>
+                    <td>0.14</td>
+                    <td>2,195</td>
+                </tr>
+
+                <tr>
+                    <td>6</td>
+                    <td>0.9660</td>
+                    <td>down</td>
+                    <td>-55.2%</td>
+                    <td>10.2</td>
+                    <td>0.00</td>
+                    <td>537</td>
+                </tr>
+
+                <tr>
+                    <td>7</td>
+                    <td>0.9649</td>
+                    <td>down</td>
+                    <td>-69.7%</td>
+                    <td>13.4</td>
+                    <td>0.05</td>
+                    <td>2,036</td>
+                </tr>
+
+                <tr>
+                    <td>8</td>
+                    <td>0.9637</td>
+                    <td>down</td>
+                    <td>-47.5%</td>
+                    <td>11.8</td>
+                    <td>0.00</td>
+                    <td>2,321</td>
+                </tr>
+
+                <tr>
+                    <td>9</td>
+                    <td>0.9634</td>
+                    <td>down</td>
+                    <td>-38.2%</td>
+                    <td>11.6</td>
+                    <td>0.00</td>
+                    <td>727</td>
+                </tr>
+
+                <tr>
+                    <td>10</td>
+                    <td>0.9618</td>
+                    <td>down</td>
+                    <td>-64.1%</td>
+                    <td>11.1</td>
+                    <td>0.23</td>
+                    <td>2,201</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Action playbook</h3>
+
+        <div class="recommendation">
+            <strong>Investigate Decline</strong>
+            Pages with high model priority and a declining performance trend
+            should be investigated first. The investigation should determine
+            whether the decline is persistent and whether a content
+            intervention is appropriate.
+        </div>
+
+        <div class="recommendation">
+            <strong>Review Before Refreshing</strong>
+            A high model score should not automatically trigger a refresh.
+            Human review should consider information not available to the
+            model before deciding on an intervention.
+        </div>
+
+        <div class="recommendation">
+            <strong>Monitor</strong>
+            If the decline appears temporary or is explained by an external
+            factor, monitoring may be more appropriate than changing the
+            content.
+        </div>
+
+        <h3>What could make the recommendations wrong?</h3>
+
+        <p>
+            A recommendation can be wrong if the observed decline is
+            temporary, if an external event explains the performance change,
+            if important context is absent from the dataset, or if the
+            historical relationship learned by the model does not apply to
+            the current situation.
+        </p>
+    </section>
+
+
+    <!-- REPRODUCIBILITY -->
+
+    <section>
+        <h2>7. Reproducibility</h2>
+
+        <p>
+            The complete analysis is maintained in the project repository
+            using executable Jupyter notebooks.
+        </p>
+
+        <ul>
+            <li>Feature and leakage investigation</li>
+            <li>Rule-based baseline construction</li>
+            <li>Model development and validation</li>
+            <li>Final Logistic Regression training</li>
+            <li>Ranked recommendation generation</li>
+        </ul>
+
+        <h3>Project resources</h3>
+
+        <p>
+            <strong>Repository:</strong>
+            <a href="https://github.com/ruzaki11/Flyrank-ml-intern-tasks">
+                Flyrank-ml-intern-tasks
+            </a>
+        </p>
+
+        <p>
+            <strong>Capstone notebook:</strong>
+            <a href="https://github.com/ruzaki11/Flyrank-ml-intern-tasks/blob/main/work/notebooks/capstone.ipynb">
+                work/notebooks/capstone.ipynb
+            </a>
+        </p>
+
+        <p>
+            <strong>Baseline notebook:</strong>
+            <code>work/notebooks/w04_baseline_score.ipynb</code>
+        </p>
+
+        <p>
+            <strong>Model notebook:</strong>
+            <code>work/notebooks/w05_model.ipynb</code>
+        </p>
+
+        <p>
+            <strong>Recommendation output:</strong>
+            <code>work/outputs/capstone_ranked_recommendations.csv</code>
+        </p>
+
+        <p>
+            The capstone notebook contains the executable workflow used to
+            generate the final ranked recommendation output.
+        </p>
+    </section>
+
+
+    <!-- ACKNOWLEDGMENTS -->
+
+    <section>
+        <h2>8. Acknowledgments &amp; Data Credit</h2>
+
+        <p>
+            This work was built using the
+            <strong>FlyRank ML Internship dataset</strong>.
+        </p>
+
+        <p>
+            Data source:
+            <a href="https://flyrank.ai" target="_blank" rel="noopener">
+                FlyRank
+            </a>
+        </p>
+
+        <p class="note">
+            The dataset provided the anonymized search, content, and
+            performance signals used throughout this analysis.
+        </p>
+    </section>
+
+</main>
+
+
+<footer>
+    <p>
+        FlyRank ML Internship · Search Intelligence Capstone
+    </p>
+
+    <p>
+        <a href="https://github.com/ruzaki11/Flyrank-ml-intern-tasks">
+            View the project repository
+        </a>
+    </p>
+</footer>
+
+</body>
+</html>
